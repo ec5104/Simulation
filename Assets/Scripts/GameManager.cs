@@ -10,12 +10,17 @@ public class GameManager : MonoBehaviour
     public GameObject foodObj;
 
     public List<GameObject> allFood = new List<GameObject>();
+
+    [SerializeField] float maxFoodCount;
+    float foodCount;
     
+    public int FoodCount => Mathf.RoundToInt(foodCount);
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         leftMouse = InputSystem.actions.FindAction("MouseClick");
+        foodCount = maxFoodCount;
     }
 
     // Update is called once per frame
@@ -23,7 +28,11 @@ public class GameManager : MonoBehaviour
     {
         if (leftMouse.WasPressedThisFrame())
         {
-            MakeFood();
+            if (foodCount > 0)
+            {
+                MakeFood();
+                
+            }
         }   
     }
 
@@ -32,11 +41,13 @@ public class GameManager : MonoBehaviour
         Vector3 newPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         newPos.z = 0;
         allFood.Add(Instantiate(foodObj, newPos, Quaternion.identity));
+        foodCount--;
     }
 
     public void DestroyFood(GameObject food)
     {
         allFood.Remove(food);
         Destroy(food);
+        foodCount++;
     }
 }
